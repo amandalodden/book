@@ -83,6 +83,7 @@ The switcher is written to avoid trapping and so any trap is assumed to be an ac
 
 On the cross-compartment call path, the switcher is responsible for unsealing the capability that refers to the export table of the callee, clearing unused argument registers, pushing the information about the return to the trusted stack, subsetting the bounds of the stack, and zeroing the part of the stack passed to the callee.
 On return, it zeroes the stack again, zeroes unused return registers, and restores the callee's state.
+\amanda{On return, wouldn't it restore the caller's state, not the callee's?}
 
 This means that the switcher is the only component that has access to either two threads', or two compartments', state at the same time.
 As such, it is in the TCB for both compartment and thread isolation.
@@ -112,6 +113,7 @@ This function is used in the implementation of priority-inheriting locks (see \r
 Implementing efficient priority-inheriting locks requires a fast mechanism for getting the current thread ID so that it can be stored in the lock.
 
 \functiondoc{thread_id_get}
+\amanda{I am not certain where this text is stored, but within it, it says "Those contexts are very restricted in what it can do" and that should be "Those contexts are very restricted in what they can do"}
 
 \section{Time slicing with the scheduler}
 
@@ -133,7 +135,7 @@ The scheduler is, by definition, in the TCB for availability.
 It is the component that decides which threads run and which do not.
 A bug in the scheduler (with or without an active attacker) can result in a thread failing to run.
 
-It is not; however, in the TCB for confidentiality or integrity.
+It is not, however, in the TCB for confidentiality or integrity.
 The scheduler has no mechanism to inspect the state of an interrupted thread.
 When invoked explicitly, it is called with a normal cross-compartment call and so has no access to anything other than the arguments.
 
@@ -162,7 +164,7 @@ If it incorrectly configures revocation state or reuses memory too early then a 
 
 The allocator is not able to bypass capability permissions, it simply holds a capability that spans the whole of heap memory.
 As such, it is in the TCB only with respect to heap allocations.
-It cannot access globals (or code), held in other compartments and so a compartment that does not use the heap does not need to trust the allocator.
+It cannot access globals (or code) held in other compartments and so a compartment that does not use the heap does not need to trust the allocator.
 
 The allocator also provides a rich set of mechanisms (described in \ref{shared_heap}) for two mutually distrusting compartments to ensure that memory is not deallocated at inconvenient times.
 
